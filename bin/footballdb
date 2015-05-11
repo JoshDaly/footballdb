@@ -1,0 +1,214 @@
+#!/usr/bin/python
+###############################################################################
+#                                                                             #
+#    footballdb                                                               #
+#                                                                             #
+#    Main entry point for the footballdb software                             #
+#                                                                             #
+#    Copyright (C) Josh Daly                                                  #
+#                                                                             #
+###############################################################################
+#                                                                             #
+#    This program is free software: you can redistribute it and/or modify     #
+#    it under the terms of the GNU General Public License as published by     #
+#    the Free Software Foundation, either version 3 of the License, or        #
+#    (at your option) any later version.                                      #
+#                                                                             #
+#    This program is distributed in the hope that it will be useful,          #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+#    GNU General Public License for more details.                             #
+#                                                                             #
+#    You should have received a copy of the GNU General Public License        #
+#    along with this program. If not, see <http://www.gnu.org/licenses/>.     #
+#                                                                             #
+###############################################################################
+
+__author__ = "Josh Daly"
+__copyright__ = "Copyright 2015"
+__credits__ = ["Josh Daly"]
+__license__ = "GPLv3"
+__version__ = "0.1.0"
+__maintainer__ = "Josh Daly"
+__email__ = "joshua.daly@uqconnect.edu.au"
+__status__ = "Dev"
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+
+# system imports
+import argparse
+import sys
+
+# local imports
+from trackm.server import Server
+from trackm.view import View
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+
+def doWork(args):
+    if(args.subparser_name == 'server'):
+        
+        S = Server(args.db)
+    
+        if args.serv_parser_name == "":
+            pass
+    
+    elif(args.subparser_name == 'add'):
+        pass
+    
+    elif(args.subparser_name == 'view'):
+        pass
+    
+    elif(args.subparser_name == 'test'):
+        pass
+    
+    else:
+        print "ERROR: Unknown mode '%s'" % args.subparser_name
+    
+
+def printHelp():
+    print '''\
+
+             ...::: FootballDB :::...
+
+    Store your fooball data in a handy SQLite database
+
+   -----------------------------------------
+                version: %s
+   -----------------------------------------
+
+    footballdb server   -> Create a footballdb server to handle DB creation and I/O requests
+    footballdb view     -> Utilities for visualising footballDB data
+
+    USE: footballdb OPTION -h to see detailed options
+    ''' % __version__
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(add_help=False)
+    subparsers = parser.add_subparsers(help="--", dest='subparser_name')
+
+    #-------------------------------------------------
+    #-------------------------------------------------
+    # Deploy FootballDB server
+    server_parser = subparsers.add_parser('server',
+                                          formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                          help='Create a FootballDB server to handle DB creation and I/O request',
+                                          description='Create a FootballDB server to handle DB creation and I/O request')
+    serv_subparser = server_parser.add_subparsers(help='--', dest='serv_parser_name')
+    
+    #-------------------------------------------------
+    # create footballDB database file (create if necessary)
+    create_db_parser = serv_subparser.add_parser('create_db',
+                                                formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                                help='Create footballDB database file',
+                                                description='Create footballDB database file')
+    create_db_parser.add_argument("db", help="Path to the footballDB database to use / create")
+    
+    #-------------------------------------------------
+    # Import football data into the database (create if necessary)
+    import_gamedata_parser = serv_subparser.add_parser('importGameStats',
+                                               formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                               help='Import new game data into database',
+                                               description='Import new game data into database')
+    import_gamedata_parser.add_argument("db", help="Path to the footballDB database to use / create")
+    import_gamedata_parser.add_argument("gameData", help="File game-day statistics")
+    
+    # Import results for round into the database (create if necessary)
+    import_results_parser = serv_subparser.add_parser('importResults',
+                                               formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                               help='Import new game data into database',
+                                               description='Import new game data into database')
+    import_results_parser.add_argument("db", help="Path to the footballDB database to use / create")
+    import_results_parser.add_argument("results", help="File containing results for the round")
+    
+    #-------------------------------------------------
+    #-------------------------------------------------
+    # Visualise FootballDB data
+    view_parser = subparsers.add_parser('view',
+                                        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                        help='Utilities for visualising footballdb data',
+                                        description='Utilities for visualising footballdb data')
+    
+    view_subparsers = view_parser.add_subparsers(help='--', dest='view_parser_name')
+    
+    #-------------------------------------------------
+    # visualise footballdb ladder
+    ladder_parser = view_subparsers.add_parser('ladder',
+                                               formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                               help='Visualise the current or past ladders',
+                                               description='Visualise the current or past ladders')
+    
+    #-------------------------------------------------
+    # visualise footballdb team data
+    team_parser = view_subparsers.add_parser('team',
+                                            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                            help='Visualise team data for the current or past season',
+                                            description='Visualise team data for the current or past season')    
+    
+    #-------------------------------------------------
+    # visualise footballdb player data
+    player_parser = view_subparsers.add_parser('player',
+                                               formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                               help='Visualise player data for the current or past season',
+                                               description='Visualise player data for the current or past season')    
+    
+    #-------------------------------------------------
+    # visualise footballdb compare player data
+    compare_parser = view_subparsers.add_parser('compare',
+                                               formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                               help='Compare players current or past statistics',
+                                               description='Compare players current or past statistics')
+    
+    #-------------------------------------------------
+    #-------------------------------------------------
+    # Visualise FootballDB data
+    test_parser = subparsers.add_parser('test',
+                                        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                        help='Test',
+                                        description='Test')
+    test_parser.add_argument("db", help="Path to the footballDB database to use / create")
+    test_parser.add_argument("pairs", help="File containing pairs to import")
+    test_parser.add_argument("paths", help="File linking contig IDs to paths")
+    
+    #-------------------------------------------------
+    # get and check options
+    args = None
+    if(len(sys.argv) == 1):
+        printHelp()
+        sys.exit(0)
+    elif(sys.argv[1] == '-v' or sys.argv[1] == '--version'):
+        print "BamTyper: version %s %s %s" % (__version__, __copyright__, __author__)
+        sys.exit(0)
+    elif(sys.argv[1] == '-h' or sys.argv[1] == '--help'):
+        printHelp()
+        sys.exit(0)
+    else:
+        args = parser.parse_args()
+
+    # profiling happens here. If you'd like to track the speed your code runs at
+    # then set the following to True and voila!
+    if(False):
+        import cProfile
+        cProfile.run('doWork(args)', 'profile')
+        ##########################################
+        ##########################################
+        # Use this in python console!
+        #import pstats
+        #p = pstats.Stats('prof')
+        #p.sort_stats('cumulative').print_stats(10)
+        #p.sort_stats('time').print_stats(10)
+        ##########################################
+        ##########################################
+    else:
+        doWork(args)
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
