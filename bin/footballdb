@@ -58,12 +58,12 @@ def doWork(args):
         S = Server(args.db)
     
         if args.serv_parser_name == "importGameStats":
-            #S.importGameStats(args.gameDataFile,
-            #                  args.opposition,
-            #                  args.season,
-            #                  args.week
-            #                  )
-            S.importTest()
+            S.importGameStats(args.gameDataFile,
+                              args.opposition,
+                              args.season,
+                              args.week
+                              )
+            #S.importTest()
         elif args.serv_parser_name == "importResults":
             pass
     

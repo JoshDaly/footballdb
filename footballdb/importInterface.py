@@ -79,31 +79,12 @@ class ImportInterface(Interface):
             # if True, database has been created!
             print "Database %s created" % self.dbFileName
         
-        to_db = {}
-        
         # add game data to DB
         self.convertFileIntoArray(gameDataCSV,
-                                  opposition,
-                                  season,
-                                  week,
-                                  to_db)
-        
-        to_db = [(0,8,5,0,1,0,7,1,4,0,47,40,1,11,5,6,0)]
-        
-        self.insert("ron",["goals","shots_attempted","shots_on_target","assists",
-                          "tackles","intercepts","gk_saves","fouls_committed",
-                          "fouls_suffered","blocked_shots","passes_attempted",
-                          "passes_successful","subbed","attacking_passes_attempted",
-                          "attacking_passes_successful","turnovers","deflected_passes"], to_db)
-        
-        #for player in to_db.keys():
-        #    print player
-        #    data_to_db = to_db[player]
-        #    self.insert("%s" % player, ["goals","shots_attempted","shots_on_target","assists",
-        #                                "tackles","intercepts","gk_saves","fouls_committed",
-        #                                "fouls_suffered","blocked_shots","passes_attempted",
-        #                                "passes_successful","subbed","attacking_passes_attempted",
-        #                                "attacking_passes_successful","turnovers","deflected_passes"],data_to_db)
+                                opposition,
+                                season,
+                                week
+                                )
         
         self.disconnect()
     
@@ -111,8 +92,8 @@ class ImportInterface(Interface):
                              gameDataCSV,
                              opposition,
                              season,
-                             week,
-                             to_db):
+                             week
+                             ):
         
         with open(gameDataCSV) as fh:
             for l in fh:
@@ -139,11 +120,49 @@ class ImportInterface(Interface):
                     turnovers                   = tabs[16]
                     deflected_passes            = tabs[17]
 
-                    to_db[player] = [(goals,shots_attempted,shots_on_target,assists,tackles,
-                                    intercepts,gk_saves,fouls_committed,fouls_suffered,
-                                    blocked_shots,passes_attempted,passes_successful,subbed,
-                                    attacking_passes_attempted,attacking_passes_successful,turnovers,deflected_passes)]
+                    to_db = [(season, week, opposition, goals,shots_attempted,shots_on_target,assists,tackles,
+                            intercepts,gk_saves,fouls_committed,fouls_suffered,
+                            blocked_shots,passes_attempted,passes_successful,subbed,
+                            attacking_passes_attempted,attacking_passes_successful,turnovers,deflected_passes)]
                     
+                    # check to see if table exists, if not, create it!
+                    if self.db.addNewPlayer(player):
+                        print 'creating table'
+                        """
+                        # insert data into table
+                        self.insert(player,
+                                    ["uid",
+                                    "season",
+                                    "week",
+                                    "opposition",
+                                    "goals",
+                                    "shots_attempted",
+                                    "shots_on_target",
+                                    "assists",
+                                    "tackles",
+                                    "intercepts",
+                                    "gk_saves",
+                                    "fouls_committed",
+                                    "fouls_suffered",
+                                    "blocked_shots",
+                                    "passes_attempted",
+                                    "passes_successful",
+                                    "subbed",
+                                    "attacking_passes_attempted",
+                                    "attacking_passes_successful",
+                                    "turnovers",
+                                    "deflected_passes"
+                                    ],
+                                    to_db)
+                        """
+                    else:
+                        print "I got to here"
+                        
+                    
+    def insertData(self, ):
+        pass
+    
+    
     def addBars(self):
         """Add bars to the database"""
         if not self.connect(createDB=True):

@@ -70,7 +70,7 @@ class FootballDB(BaseFile):
                                type="FootballDB_DB",
                                version=__FOOTBALLDB_DB_VERSION__,
                                force=force)
-
+        """
         # add Foo specific tables
         self._addTable("bars",                  # the name of the table
                        {
@@ -79,6 +79,35 @@ class FootballDB(BaseFile):
                         "material" : "TEXT",    # As may as you like
                        },
                        force=True)
-
+        """
         # Keep adding tables
         
+    def addNewPlayer(self, player):
+        """Add new player table to present Database"""
+        self._addTable(player,
+                       {
+                        "uid" : "INT",
+                        "season" : "INT",
+                        "week" : "INT",
+                        "opposition" : "TEXT",
+                        "goals" : "INT",
+                        "shots_attempted" : "INT",
+                        "shots_on_target" : "INT",
+                        "assists" : "INT",
+                        "tackles" : "INT",
+                        "intercepts" : "INT",
+                        "gk_saves" : "INT",
+                        "fouls_committed" : "INT",
+                        "fouls_suffered" : "INT",
+                        "blocked_shots" : "INT",
+                        "passes_attempted" : "INT",
+                        "passes_successful" : "INT",
+                        "subbed" : "INT",
+                        "attacking_passes_attempted" : "INT",
+                        "attacking_passes_successful" : "INT",
+                        "turnovers" : "INT",
+                        "deflected_passes" : "INT"
+                       },
+                       force=True)
+        
+    
