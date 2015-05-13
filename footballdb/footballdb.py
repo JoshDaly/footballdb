@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 ###############################################################################
 #                                                                             #
-#    viewInterface.py                                                         #
+#    footballdb.py                                                         #
 #                                                                             #
-#    Main entry point for the footballdb software                             #
+#    Description!!                                                            #
 #                                                                             #
 #    Copyright (C) Josh Daly                                                  #
 #                                                                             #
@@ -25,10 +25,10 @@
 ###############################################################################
 
 __author__ = "Josh Daly"
-__copyright__ = "Copyright 2015"
+__copyright__ = "Copyright 2014"
 __credits__ = ["Josh Daly"]
 __license__ = "GPLv3"
-__version__ = "0.1.0"
+__version__ = "0.0.1"
 __maintainer__ = "Josh Daly"
 __email__ = "joshua.daly@uqconnect.edu.au"
 __status__ = "Dev"
@@ -37,3 +37,60 @@ __status__ = "Dev"
 ###############################################################################
 ###############################################################################
 ###############################################################################
+
+class TemplateClass():
+    """Utilities wrapper"""
+    def __init__(self): pass
+
+    def sayHi(self):
+        print('write some "REAL" code you bum!')
+
+    def demoStuff(self):
+
+        """
+        # parse a file
+        try:
+            with open(filename, "r") as fh:
+                for line in fh:
+                    print line
+        except:
+            print "Error opening file:", filename, exc_info()[0]
+            raise
+        """
+
+        """
+        fig = plt.figure()
+
+        #-----
+        # make a 3d plot
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(points[:,0],
+                   points[:,1],
+                   points[:,2],
+                   #edgecolors='none',
+                   #c=colors,
+                   #s=2,
+                   #marker='.'
+                   )
+
+        #-----
+        # make a 2d plot
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(points[:,0],
+                points[:,1],
+                '*g')
+
+        #-----
+        # show figure
+        plt.show()
+        # or save figure
+        plt.savefig(filename,dpi=300,format='png')
+
+        #-----
+        # clean up!
+        plt.close(fig)
+        del fig
+        """
+
+        return 0

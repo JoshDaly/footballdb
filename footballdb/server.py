@@ -1,7 +1,7 @@
 #!/usr/bin/python
 ###############################################################################
 #                                                                             #
-#    viewInterface.py                                                         #
+#    server.py                                                                #
 #                                                                             #
 #    Main entry point for the footballdb software                             #
 #                                                                             #
@@ -37,3 +37,40 @@ __status__ = "Dev"
 ###############################################################################
 ###############################################################################
 ###############################################################################
+
+# system imports
+import sys
+#sys.path.insert(0, "/home/josh/working/sw/footballdb/footballdb")
+
+# local imports
+from footballdb.importInterface import ImportInterface
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+
+class Server(object):
+    def __init__(self,
+                 dbfilename         # path to db file to work with
+                 ):
+        self.dbfilename = dbfilename
+        
+    def importGameStats(self,
+                        gameStatsFile,  # csv containing game statistics
+                        opposition,     # opposition team name
+                        season,         # season number
+                        week            # week number
+                        ):
+        print "Importing new game data for Week %d of Season %d against %s" % (week,
+                                                                               season,
+                                                                               opposition)
+        # get an interface to the file
+        II = ImportInterface(self.dbFileName)
+        
+        # import game stats as csv file
+        II.importGameData(gameStatsFile,
+                          opposition,
+                          season,
+                          week)
+    

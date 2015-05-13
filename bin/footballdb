@@ -41,10 +41,11 @@ __status__ = "Dev"
 # system imports
 import argparse
 import sys
+#sys.path.insert(0, "/home/josh/working/sw/footballdb/footballdb")
 
 # local imports
-from trackm.server import Server
-from trackm.view import View
+from footballdb.server import Server
+from footballdb.view import View
 
 ###############################################################################
 ###############################################################################
@@ -56,11 +57,10 @@ def doWork(args):
         
         S = Server(args.db)
     
-        if args.serv_parser_name == "":
+        if args.serv_parser_name == "importGameStats":
+            S.importGameStats()
+        elif args.serv_parser_name == "importResults":
             pass
-    
-    elif(args.subparser_name == 'add'):
-        pass
     
     elif(args.subparser_name == 'view'):
         pass
@@ -103,21 +103,17 @@ if __name__ == '__main__':
     serv_subparser = server_parser.add_subparsers(help='--', dest='serv_parser_name')
     
     #-------------------------------------------------
-    # create footballDB database file (create if necessary)
-    create_db_parser = serv_subparser.add_parser('create_db',
-                                                formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                                                help='Create footballDB database file',
-                                                description='Create footballDB database file')
-    create_db_parser.add_argument("db", help="Path to the footballDB database to use / create")
-    
-    #-------------------------------------------------
     # Import football data into the database (create if necessary)
     import_gamedata_parser = serv_subparser.add_parser('importGameStats',
                                                formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                help='Import new game data into database',
                                                description='Import new game data into database')
     import_gamedata_parser.add_argument("db", help="Path to the footballDB database to use / create")
-    import_gamedata_parser.add_argument("gameData", help="File game-day statistics")
+    import_gamedata_parser.add_argument("gameDataFile", help="File game-day statistics")
+    import_gamedata_parser.add_argument("opposition", help="Opposition team name")
+    import_gamedata_parser.add_argument("season", type=int, help="Season number")
+    import_gamedata_parser.add_argument("week", type=int, help="Week of season")
+    
     
     # Import results for round into the database (create if necessary)
     import_results_parser = serv_subparser.add_parser('importResults',

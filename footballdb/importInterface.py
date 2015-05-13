@@ -3,7 +3,7 @@
 #                                                                             #
 #    importInterface.py                                                       #
 #                                                                             #
-#    Main entry point for the footballdb software                             #
+#    Interface for importing data stored in csv files into the FootballDB DB  #
 #                                                                             #
 #    Copyright (C) Josh Daly                                                  #
 #                                                                             #
@@ -37,3 +37,79 @@ __status__ = "Dev"
 ###############################################################################
 ###############################################################################
 ###############################################################################
+
+# system imports
+import sys
+#sys.path.insert(0, "/home/josh/working/sw/footballdb/footballdb")
+
+# local imports
+from dancingPeasant.exceptions import *
+from dancingPeasant.interface import Interface
+from dancingPeasant.interface import Condition
+from footballdb.db import FootballDB
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+
+class ImportInterface(Interface):
+    """Use this interface for importing data stored in csv
+    files into the FootballDB DB"""
+    def __init__(self,
+                 dbFileName,        # file name to connect to
+                 verbosity=-1       # turn off all DP chatter
+                 ):
+        Interface.__init__(self, dbFileName, verbosity)
+        self.db = FooDB(verbosity=verbosity)            # <-- This line is important!
+        self.dbFileName = dbFileName
+    
+    def importGameData(self,
+                       gameDataCSV,     # file containing data 
+                       opposition,      # string of opposition team
+                       season,          # int of season number
+                       week):           # int of week in season
+        """import new game data into the FootballDB"""
+        if not self.connect(createDB=True):
+            # database exists
+            print 'Database already exists!'
+        else:
+            # if True = database has been created!
+            print "Database %s created" % self.dbFileName
+        
+        self.disconnect()
+    
+    def addBars(self, bars):
+        """Add bars to the database"""
+        # connect to the database
+        self.connect()
+    
+        # bars is an array of tuples. All ordered in the same way
+        # EX:
+        # [(10, 1, "iron"), (20, 15, "wax"), ... ]
+        #
+        self.insert("bars",
+                    ["length",
+                     "diameter",
+                     "material"],
+                     bars)
+    
+        # disconnect once done
+        self.disconnect()
+    
+    def getBars(self, length):
+        """Get bars longer than a set length"""
+    
+        # connect to the database
+        self.connect()
+    
+        # set the select condition
+        C = Condition("length", ">", length)
+    
+        # access the database and get rows
+        rows = self.select('bars', ["material", "diameter"], C)
+    
+        # disconnect once done
+        self.disconnect()
+    
+        # do something with the results

@@ -3,7 +3,7 @@
 #                                                                             #
 #    db.py                                                                    #
 #                                                                             #
-#    Main entry point for the footballdb software                             #
+#    Controls interactions with database file                                 #
 #                                                                             #
 #    Copyright (C) Josh Daly                                                  #
 #                                                                             #
@@ -37,3 +37,46 @@ __status__ = "Dev"
 ###############################################################################
 ###############################################################################
 ###############################################################################
+
+# system imports
+import sys
+#sys.path.insert(0, "/home/josh/working/sw/footballdb/footballdb")
+
+# local imports
+from dancingPeasant.baseFile import BaseFile
+from dancingPeasant.exceptions import *
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+
+
+
+class FootballDB(BaseFile):
+    def __init__(self, verbosity=0):
+        BaseFile.__init__(self, verbosity)
+
+    def createNewFile(self,
+                      fileName,             # name of the new file
+                      force=False,          # should we check to see if this is a wise move?
+                      ):
+        """Create a new FootballDB database file"""
+        # make a basic file
+        BaseFile.createNewFile(self,
+                               fileName,
+                               type="FootballDB_DB",
+                               version=__FOOTBALLDB_DB_VERSION__,
+                               force=force)
+
+        # add Foo specific tables
+        self._addTable("bars",                  # the name of the table
+                       {
+                        "length" : "INT",       # Specify column names and
+                        "diameter" : "INT",     # standard SQL syntax for the type
+                        "material" : "TEXT",    # As may as you like
+                       },
+                       force=True)
+
+        # Keep adding tables
+        
