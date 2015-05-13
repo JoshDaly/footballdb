@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 ###############################################################################
 #                                                                             #
-#    db.py                                                                    #
+#    footballdb.py                                                         #
 #                                                                             #
-#    Controls interactions with database file                                 #
+#    Description!!                                                            #
 #                                                                             #
 #    Copyright (C) Josh Daly                                                  #
 #                                                                             #
@@ -25,60 +25,72 @@
 ###############################################################################
 
 __author__ = "Josh Daly"
-__copyright__ = "Copyright 2015"
+__copyright__ = "Copyright 2014"
 __credits__ = ["Josh Daly"]
 __license__ = "GPLv3"
-__version__ = "0.1.0"
+__version__ = "0.0.1"
 __maintainer__ = "Josh Daly"
 __email__ = "joshua.daly@uqconnect.edu.au"
 __status__ = "Dev"
 
-__FOOTBALLDB_DB_VERSION__ = "0.1.0"
-
 ###############################################################################
 ###############################################################################
 ###############################################################################
 ###############################################################################
 
-# system imports
-import sys
-#sys.path.insert(0, "/home/josh/working/sw/footballdb/footballdb")
+class TemplateClass():
+    """Utilities wrapper"""
+    def __init__(self): pass
 
-# local imports
-from dancingPeasant.baseFile import BaseFile
-from dancingPeasant.exceptions import *
+    def sayHi(self):
+        print('write some "REAL" code you bum!')
 
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
+    def demoStuff(self):
 
+        """
+        # parse a file
+        try:
+            with open(filename, "r") as fh:
+                for line in fh:
+                    print line
+        except:
+            print "Error opening file:", filename, exc_info()[0]
+            raise
+        """
 
+        """
+        fig = plt.figure()
 
-class FootballDB(BaseFile):
-    def __init__(self, verbosity=0):
-        BaseFile.__init__(self, verbosity)
+        #-----
+        # make a 3d plot
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(points[:,0],
+                   points[:,1],
+                   points[:,2],
+                   #edgecolors='none',
+                   #c=colors,
+                   #s=2,
+                   #marker='.'
+                   )
 
-    def createNewFile(self,
-                      fileName,             # name of the new file
-                      force=False,          # should we check to see if this is a wise move?
-                      ):
-        """Create a new FootballDB database file"""
-        # make a basic file
-        BaseFile.createNewFile(self,
-                               fileName,
-                               type="FootballDB_DB",
-                               version=__FOOTBALLDB_DB_VERSION__,
-                               force=force)
+        #-----
+        # make a 2d plot
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(points[:,0],
+                points[:,1],
+                '*g')
 
-        # add Foo specific tables
-        self._addTable("bars",                  # the name of the table
-                       {
-                        "length" : "INT",       # Specify column names and
-                        "diameter" : "INT",     # standard SQL syntax for the type
-                        "material" : "TEXT",    # As may as you like
-                       },
-                       force=True)
+        #-----
+        # show figure
+        plt.show()
+        # or save figure
+        plt.savefig(filename,dpi=300,format='png')
 
-        # Keep adding tables
-        
+        #-----
+        # clean up!
+        plt.close(fig)
+        del fig
+        """
+
+        return 0
