@@ -71,14 +71,8 @@ class FootballDB(BaseFile):
                                type="FootballDB_DB",
                                version=__FOOTBALLDB_DB_VERSION__,
                                force=force)
-<<<<<<< HEAD
         
         self._addTable('results',
-=======
-        """
-        # add Foo specific tables
-        self._addTable("bars",                  # the name of the table
->>>>>>> 6e9c88113b3fbc3a7a04a1b2924593d4724e4a80
                        {
                         "season" : "INT",
                         "week" : "INT",
@@ -117,10 +111,6 @@ class FootballDB(BaseFile):
                         "deflected_passes" : "INT"
                        },
                        force=True)
-<<<<<<< HEAD
-        
-=======
-        """
         # Keep adding tables
         
     def addNewPlayer(self, player):
@@ -150,6 +140,4 @@ class FootballDB(BaseFile):
                         "deflected_passes" : "INT"
                        },
                        force=True)
-        
->>>>>>> 6e9c88113b3fbc3a7a04a1b2924593d4724e4a80
     

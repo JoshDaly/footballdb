@@ -63,11 +63,6 @@ def doWork(args):
                               args.season,
                               args.week
                               )
-<<<<<<< HEAD
-            
-=======
-            #S.importTest()
->>>>>>> 6e9c88113b3fbc3a7a04a1b2924593d4724e4a80
         elif args.serv_parser_name == "importResults":
             S.importResults(args.resultsDataFile,
                             args.season,
