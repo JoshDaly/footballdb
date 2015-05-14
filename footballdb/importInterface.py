@@ -126,6 +126,7 @@ class ImportInterface(Interface):
                             attacking_passes_attempted,attacking_passes_successful,turnovers,deflected_passes)]
                     
                     # check to see if table exists, if not, create it!
+<<<<<<< HEAD
                     #self.db.addNewPlayer(player)
                     if self.doesPlayerTableExist(player):
                         # insert data into table
@@ -163,10 +164,46 @@ class ImportInterface(Interface):
         except(lite.OperationalError):
             return False
         
+=======
+                    if self.db.addNewPlayer(player):
+                        print 'creating table'
+                        """
+                        # insert data into table
+                        self.insert(player,
+                                    ["uid",
+                                    "season",
+                                    "week",
+                                    "opposition",
+                                    "goals",
+                                    "shots_attempted",
+                                    "shots_on_target",
+                                    "assists",
+                                    "tackles",
+                                    "intercepts",
+                                    "gk_saves",
+                                    "fouls_committed",
+                                    "fouls_suffered",
+                                    "blocked_shots",
+                                    "passes_attempted",
+                                    "passes_successful",
+                                    "subbed",
+                                    "attacking_passes_attempted",
+                                    "attacking_passes_successful",
+                                    "turnovers",
+                                    "deflected_passes"
+                                    ],
+                                    to_db)
+                        """
+                    else:
+                        print "I got to here"
+                        
+                    
+>>>>>>> 6e9c88113b3fbc3a7a04a1b2924593d4724e4a80
     def insertData(self, ):
         pass
     
     
+<<<<<<< HEAD
     def importResults(self,
                       resultsDataFile,
                       season,
@@ -216,6 +253,8 @@ class ImportInterface(Interface):
                              ],
                             to_db)
                 
+=======
+>>>>>>> 6e9c88113b3fbc3a7a04a1b2924593d4724e4a80
     def addBars(self):
         """Add bars to the database"""
         if not self.connect(createDB=True):

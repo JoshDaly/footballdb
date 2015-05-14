@@ -71,8 +71,14 @@ class FootballDB(BaseFile):
                                type="FootballDB_DB",
                                version=__FOOTBALLDB_DB_VERSION__,
                                force=force)
+<<<<<<< HEAD
         
         self._addTable('results',
+=======
+        """
+        # add Foo specific tables
+        self._addTable("bars",                  # the name of the table
+>>>>>>> 6e9c88113b3fbc3a7a04a1b2924593d4724e4a80
                        {
                         "season" : "INT",
                         "week" : "INT",
@@ -111,5 +117,39 @@ class FootballDB(BaseFile):
                         "deflected_passes" : "INT"
                        },
                        force=True)
+<<<<<<< HEAD
         
+=======
+        """
+        # Keep adding tables
+        
+    def addNewPlayer(self, player):
+        """Add new player table to present Database"""
+        self._addTable(player,
+                       {
+                        "uid" : "INT",
+                        "season" : "INT",
+                        "week" : "INT",
+                        "opposition" : "TEXT",
+                        "goals" : "INT",
+                        "shots_attempted" : "INT",
+                        "shots_on_target" : "INT",
+                        "assists" : "INT",
+                        "tackles" : "INT",
+                        "intercepts" : "INT",
+                        "gk_saves" : "INT",
+                        "fouls_committed" : "INT",
+                        "fouls_suffered" : "INT",
+                        "blocked_shots" : "INT",
+                        "passes_attempted" : "INT",
+                        "passes_successful" : "INT",
+                        "subbed" : "INT",
+                        "attacking_passes_attempted" : "INT",
+                        "attacking_passes_successful" : "INT",
+                        "turnovers" : "INT",
+                        "deflected_passes" : "INT"
+                       },
+                       force=True)
+        
+>>>>>>> 6e9c88113b3fbc3a7a04a1b2924593d4724e4a80
     
