@@ -64,21 +64,52 @@ class FootballDB(BaseFile):
                       force=False,          # should we check to see if this is a wise move?
                       ):
         """Create a new FootballDB database file"""
+        
         # make a basic file
         BaseFile.createNewFile(self,
                                fileName,
                                type="FootballDB_DB",
                                version=__FOOTBALLDB_DB_VERSION__,
                                force=force)
-
-        # add Foo specific tables
-        self._addTable("bars",                  # the name of the table
+        
+        self._addTable('results',
                        {
-                        "length" : "INT",       # Specify column names and
-                        "diameter" : "INT",     # standard SQL syntax for the type
-                        "material" : "TEXT",    # As may as you like
+                        "season" : "INT",
+                        "week" : "INT",
+                        "team_a" : "TEXT",
+                        "team_b" : "TEXT",
+                        "score_a" : "INT",
+                        "score_b" : "INT",
                        },
                        force=True)
-
-        # Keep adding tables
         
+    def addNewPlayer(self, player):
+        """Add new player table to present Database"""
+        # check if table already exists for player
+        
+        self._addTable(player,
+                       {
+                        "season" : "INT",
+                        "week" : "INT",
+                        "opposition" : "TEXT",
+                        "goals" : "INT",
+                        "shots_attempted" : "INT",
+                        "shots_on_target" : "INT",
+                        "assists" : "INT",
+                        "tackles" : "INT",
+                        "intercepts" : "INT",
+                        "gk_saves" : "INT",
+                        "fouls_committed" : "INT",
+                        "fouls_suffered" : "INT",
+                        "blocked_shots" : "INT",
+                        "passes_attempted" : "INT",
+                        "passes_successful" : "INT",
+                        "subbed" : "INT",
+                        "attacking_passes_attempted" : "INT",
+                        "attacking_passes_successful" : "INT",
+                        "turnovers" : "INT",
+                        "deflected_passes" : "INT"
+                       },
+                       force=True)
+        
+    

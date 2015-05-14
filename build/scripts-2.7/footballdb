@@ -53,25 +53,27 @@ from footballdb.server import Server
 ###############################################################################
 
 def doWork(args):
-    if(args.subparser_name == 'server'):
-        
-        S = Server(args.db)
     
+    S = Server(args.db)
+    
+    if(args.subparser_name == 'server'):
         if args.serv_parser_name == "importGameStats":
-            #S.importGameStats(args.gameDataFile,
-            #                  args.opposition,
-            #                  args.season,
-            #                  args.week
-            #                  )
-            S.importTest()
+            S.importGameStats(args.gameDataFile,
+                              args.opposition,
+                              args.season,
+                              args.week
+                              )
+            
         elif args.serv_parser_name == "importResults":
-            pass
+            S.importResults(args.resultsDataFile,
+                            args.season,
+                            args.week)
     
     elif(args.subparser_name == 'view'):
         pass
     
     elif(args.subparser_name == 'test'):
-        pass
+        S.importTest()
     
     else:
         print "ERROR: Unknown mode '%s'" % args.subparser_name
@@ -90,6 +92,7 @@ def printHelp():
 
     footballdb server   -> Create a footballdb server to handle DB creation and I/O requests
     footballdb view     -> Utilities for visualising footballDB data
+    footballdb test     -> Test 
 
     USE: footballdb OPTION -h to see detailed options
     ''' % __version__
@@ -126,7 +129,9 @@ if __name__ == '__main__':
                                                help='Import new game data into database',
                                                description='Import new game data into database')
     import_results_parser.add_argument("db", help="Path to the footballDB database to use / create")
-    import_results_parser.add_argument("results", help="File containing results for the round")
+    import_results_parser.add_argument("resultsDataFile", help="File containing results for the round")
+    import_results_parser.add_argument("season", type=int, help="Season number")
+    import_results_parser.add_argument("week", type=int, help="Week of season")
     
     #-------------------------------------------------
     #-------------------------------------------------
@@ -168,14 +173,12 @@ if __name__ == '__main__':
     
     #-------------------------------------------------
     #-------------------------------------------------
-    # Visualise FootballDB data
+    # test FootballDB data
     test_parser = subparsers.add_parser('test',
                                         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                         help='Test',
                                         description='Test')
     test_parser.add_argument("db", help="Path to the footballDB database to use / create")
-    test_parser.add_argument("pairs", help="File containing pairs to import")
-    test_parser.add_argument("paths", help="File linking contig IDs to paths")
     
     #-------------------------------------------------
     # get and check options

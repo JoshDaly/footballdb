@@ -40,7 +40,7 @@ __status__ = "Dev"
 
 # system imports
 import sys
-#sys.path.insert(0, "/home/josh/working/sw/footballdb/footballdb")
+import sqlite3 as lite
 
 # local imports
 from dancingPeasant.exceptions import *
@@ -64,7 +64,7 @@ class ImportInterface(Interface):
         self.db = FootballDB(verbosity=verbosity)            # <-- This line is important!
         self.dbFileName = dbFileName
     
-    def importGameData(self,
+    def importGameStats(self,
                        gameDataCSV,     # file containing data 
                        opposition,      # string of opposition team
                        season,          # int of season number
@@ -79,31 +79,12 @@ class ImportInterface(Interface):
             # if True, database has been created!
             print "Database %s created" % self.dbFileName
         
-        to_db = {}
-        
         # add game data to DB
         self.convertFileIntoArray(gameDataCSV,
-                                  opposition,
-                                  season,
-                                  week,
-                                  to_db)
-        
-        to_db = [(0,8,5,0,1,0,7,1,4,0,47,40,1,11,5,6,0)]
-        
-        self.insert("ron",["goals","shots_attempted","shots_on_target","assists",
-                          "tackles","intercepts","gk_saves","fouls_committed",
-                          "fouls_suffered","blocked_shots","passes_attempted",
-                          "passes_successful","subbed","attacking_passes_attempted",
-                          "attacking_passes_successful","turnovers","deflected_passes"], to_db)
-        
-        #for player in to_db.keys():
-        #    print player
-        #    data_to_db = to_db[player]
-        #    self.insert("%s" % player, ["goals","shots_attempted","shots_on_target","assists",
-        #                                "tackles","intercepts","gk_saves","fouls_committed",
-        #                                "fouls_suffered","blocked_shots","passes_attempted",
-        #                                "passes_successful","subbed","attacking_passes_attempted",
-        #                                "attacking_passes_successful","turnovers","deflected_passes"],data_to_db)
+                                opposition,
+                                season,
+                                week
+                                )
         
         self.disconnect()
     
@@ -111,8 +92,8 @@ class ImportInterface(Interface):
                              gameDataCSV,
                              opposition,
                              season,
-                             week,
-                             to_db):
+                             week
+                             ):
         
         with open(gameDataCSV) as fh:
             for l in fh:
@@ -139,11 +120,102 @@ class ImportInterface(Interface):
                     turnovers                   = tabs[16]
                     deflected_passes            = tabs[17]
 
-                    to_db[player] = [(goals,shots_attempted,shots_on_target,assists,tackles,
-                                    intercepts,gk_saves,fouls_committed,fouls_suffered,
-                                    blocked_shots,passes_attempted,passes_successful,subbed,
-                                    attacking_passes_attempted,attacking_passes_successful,turnovers,deflected_passes)]
+                    to_db = [(season, week, opposition, goals,shots_attempted,shots_on_target,assists,tackles,
+                            intercepts,gk_saves,fouls_committed,fouls_suffered,
+                            blocked_shots,passes_attempted,passes_successful,subbed,
+                            attacking_passes_attempted,attacking_passes_successful,turnovers,deflected_passes)]
                     
+                    # check to see if table exists, if not, create it!
+                    #self.db.addNewPlayer(player)
+                    if self.doesPlayerTableExist(player):
+                        # insert data into table
+                        self.insert(player,
+                                    [
+                                    "season","week","opposition","goals","shots_attempted",
+                                    "shots_on_target","assists","tackles","intercepts",
+                                    "gk_saves","fouls_committed","fouls_suffered",
+                                    "blocked_shots","passes_attempted","passes_successful",
+                                    "subbed","attacking_passes_attempted","attacking_passes_successful",
+                                    "turnovers","deflected_passes"
+                                    ],
+                                    to_db)
+                    else:
+                        print "Adding new player (%s) table to %s" % (player, self.dbFileName)
+                         # create table
+                        self.db.addNewPlayer(player)
+                        
+                        # then add data
+                        self.insert(player,
+                                    [
+                                    "season","week","opposition","goals","shots_attempted",
+                                    "shots_on_target","assists","tackles","intercepts",
+                                    "gk_saves","fouls_committed","fouls_suffered",
+                                    "blocked_shots","passes_attempted","passes_successful",
+                                    "subbed","attacking_passes_attempted","attacking_passes_successful",
+                                    "turnovers","deflected_passes"
+                                    ],
+                                    to_db)
+                    
+    def doesPlayerTableExist(self, player):
+        try:
+            table_data = self.select(player, "*")
+            return True
+        except(lite.OperationalError):
+            return False
+        
+    def insertData(self, ):
+        pass
+    
+    
+    def importResults(self,
+                      resultsDataFile,
+                      season,
+                      week
+                      ):
+        """Import the results for the round into the ladder DB.
+           Create new database if it doesn't already exist!"""
+        
+        if not self.connect(createDB=True):
+            # database exists
+            pass
+        else:
+            # if True, database has been created!
+            print "Database %s created" % self.dbFileName
+    
+        # add round results to DB
+        self.addRoundResults(resultsDataFile,
+                             season,
+                             week)
+        
+        self.disconnect()
+    
+    
+    def addRoundResults(self,
+                        resultsDataFile,
+                        season,
+                        week):
+        # table already exists, created with the database!
+        with open(resultsDataFile) as fh:
+            for l in fh:
+                tabs        = l.rstrip().split("\t")
+                team_a      = tabs[0]
+                team_b      = tabs[1]
+                score_a     = tabs[2]
+                score_b     = tabs[3]
+                
+                to_db = [(season, week, team_a, team_b, score_a, score_b)]
+        
+                self.insert('results',
+                            [
+                             "season",
+                             "week",
+                             "team_a",
+                             "team_b",
+                             "score_a",
+                             "score_b"
+                             ],
+                            to_db)
+                
     def addBars(self):
         """Add bars to the database"""
         if not self.connect(createDB=True):
@@ -159,8 +231,9 @@ class ImportInterface(Interface):
         # bars is an array of tuples. All ordered in the same way
         # EX:
         bars =  [(10, 1, "iron"), (20, 15, "wax")]
+        #bars =  [(1, 15, "gold"), (2, 15, "asphalt")]
         #
-        self.insert("bam",
+        self.insert("bars",
                     ["length",
                      "diameter",
                      "material"],

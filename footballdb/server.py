@@ -68,10 +68,25 @@ class Server(object):
         II = ImportInterface(self.dbfilename)
         
         # import game stats as csv file
-        II.importGameData(gameStatsFile,
+        II.importGameStats(gameStatsFile,
                           opposition,
                           season,
                           week)
+    
+    def importResults(self,
+                      resultsDataFile,
+                      season,
+                      week):
+        print "Importing round results for Week %d of Season %d" % (week,
+                                                                    season)
+        # get an interface to the file
+        II = ImportInterface(self.dbfilename)
+        
+        # import results as csv file
+        II.importResults(resultsDataFile,
+                         season,
+                         week)
+    
     
     def importTest(self):
         # get an interface to the file
