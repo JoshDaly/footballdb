@@ -87,6 +87,14 @@ class Server(object):
                          season,
                          week)
     
+    def viewTable(self,
+                  season):
+        # get an interface to the file
+        II = ImportInterface(self.dbfilename)
+        
+        # import results as csv file
+        II.viewTable(season)
+    
     
     def importTest(self):
         # get an interface to the file
