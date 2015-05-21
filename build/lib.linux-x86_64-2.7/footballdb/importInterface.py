@@ -41,6 +41,7 @@ __status__ = "Dev"
 # system imports
 import sys
 import sqlite3 as lite
+import operator
 
 # local imports
 from dancingPeasant.exceptions import *
@@ -162,7 +163,7 @@ class ImportInterface(Interface):
             return True
         except(lite.OperationalError):
             return False
-                    
+
     def insertData(self, ):
         pass
     
@@ -239,79 +240,230 @@ class ImportInterface(Interface):
             score_a = row[3]
             score_b = row[4]
             
-            result  = self.gameResult(score_a,
-                                     score_b)
+            # initialise team
+            self.initialiseTeam(tableData,team_a)
+            self.initialiseTeam(tableData,team_b)
             
-            bonus   = self.gameBonus(score_a,
-                                     score_b)
+            # add data to dictionary
+            self.prepareData(tableData, team_a, team_b, score_a, score_b)
             
-            self.buildTableDataWrapper(tableData,
-                                team_a,
-                                score_a,
-                                score_b,
-                                result[0],
-                                bonus[0]
-                                )
+        sorted_table = sorted(tableData.items(), key=lambda x:x[1]['points'],reverse=True)
+        
+        for teamData in sorted_table:
+            team = teamData[0]
+            print team, tableData[team]['wins']
+        
             
-            self.buildTableDataWrapper(tableData,
-                                team_b,
-                                score_b,
-                                score_a,
-                                result[1],
-                                bonus[1]
-                                )
-        print tableData
-            
-    def buildTableDataWrapper(self,
-                     tableData,
-                     team,
-                     For,
-                     Against,
-                     result,
-                     bonus
-                     ):
-        # add goals for
-        self.buildTableData(tableData,
-                            team,
-                            'for',
-                            For
-                            )
-            
-        # add goals against
-        self.buildTableData(tableData,
-                            team,
-                            'against',
-                            Against
-                            )
-                
-        # add result
-        self.buildTableData(tableData,
-                            team,
-                            'result',
-                            result
-                            )
-            
-        # add bonus points
-        self.buildTableData(tableData,
-                            team,
-                            'bonus',
-                            bonus
-                            )
+    def initialiseTeam(self, tableData, team):
+        if team not in tableData and team!= 'bye':
+            tableData[team] = {}
+            tableData[team]['goalsFor']         = 0
+            tableData[team]['goalsAgainst']     = 0
+            tableData[team]['wins']             = 0
+            tableData[team]['losses']           = 0
+            tableData[team]['draws']            = 0
+            tableData[team]['byes']             = 0
+            tableData[team]['forfeitWins']      = 0
+            tableData[team]['forfeitLosses']    = 0
+            tableData[team]['points']           = 0
+            tableData[team]['bonusPoints']      = 0
     
-    def buildTableData(self,
-                       tableData,
-                       team,
-                       stat,
-                       value):
-        try:
-            tableData[team][stat] += value
-        except KeyError:
-            try:
-                tableData[team][stat] = value
-            except KeyError:
-                tableData[team] = {stat:value}
+    def prepareData(self, tableData, team_a, team_b, score_a, score_b):
+        # check if bye
+        if self.isBye(team_a,team_b):
+            if team_a == 'bye':
+                self.addDataToTable(tableData,
+                                    team_b,
+                                    goalsFor=0,
+                                    goalsAgainst=0,
+                                    wins=0,
+                                    losses=0,
+                                    draws=0,
+                                    byes=1,
+                                    forfeitWins=0,
+                                    forfeitLosses=0,
+                                    points=0,
+                                    bonusPoints=0)
+            elif team_b == 'bye':
+                self.addDataToTable(tableData,
+                                    team_a,
+                                    goalsFor=0,
+                                    goalsAgainst=0,
+                                    wins=0,
+                                    losses=0,
+                                    draws=0,
+                                    byes=1,
+                                    forfeitWins=0,
+                                    forfeitLosses=0,
+                                    points=0,
+                                    bonusPoints=0)
+        
+        # check if forfeit
+        elif self.isForfeit(score_a, score_b):
+            if score_a == 'FW':
+                self.addDataToTable(tableData,
+                                    team_a,
+                                    goalsFor=0,
+                                    goalsAgainst=0,
+                                    wins=0,
+                                    losses=0,
+                                    draws=0,
+                                    byes=0,
+                                    forfeitWins=1,
+                                    forfeitLosses=0,
+                                    points=4,
+                                    bonusPoints=0)
+                self.addDataToTable(tableData,
+                                    team_b,
+                                    goalsFor=0,
+                                    goalsAgainst=0,
+                                    wins=0,
+                                    losses=0,
+                                    draws=0,
+                                    byes=0,
+                                    forfeitWins=0,
+                                    forfeitLosses=1,
+                                    points=0,
+                                    bonusPoints=0)
+            elif score_b == 'FW':
+                self.addDataToTable(tableData,
+                                    team_b,
+                                    goalsFor=0,
+                                    goalsAgainst=0,
+                                    wins=0,
+                                    losses=0,
+                                    draws=0,
+                                    byes=0,
+                                    forfeitWins=1,
+                                    forfeitLosses=0,
+                                    points=4,
+                                    bonusPoints=0)
+                self.addDataToTable(tableData,
+                                    team_a,
+                                    goalsFor=0,
+                                    goalsAgainst=0,
+                                    wins=0,
+                                    losses=0,
+                                    draws=0,
+                                    byes=0,
+                                    forfeitWins=0,
+                                    forfeitLosses=1,
+                                    points=0,
+                                    bonusPoints=0)
+        
+        # check if result
+        else:
+            result  = self.gameResult(score_a,score_b)
+            bonus   = self.gameBonus(score_a,score_b)
+            score_a = int(score_a)
+            score_b = int(score_b)
+            
+            if result == 'draw':
+                self.addDataToTable(tableData,
+                                    team_a,
+                                    goalsFor=score_a,
+                                    goalsAgainst=score_b,
+                                    wins=0,
+                                    losses=0,
+                                    draws=1,
+                                    byes=0,
+                                    forfeitWins=0,
+                                    forfeitLosses=0,
+                                    points=2+bonus[0],
+                                    bonusPoints=bonus[0])
+                self.addDataToTable(tableData,
+                                    team_b,
+                                    goalsFor=score_b,
+                                    goalsAgainst=score_a,
+                                    wins=0,
+                                    losses=0,
+                                    draws=1,
+                                    byes=0,
+                                    forfeitWins=0,
+                                    forfeitLosses=0,
+                                    points=2+bonus[1],
+                                    bonusPoints=bonus[1])
+            elif result == 'awin':
+                self.addDataToTable(tableData,
+                                    team_a,
+                                    goalsFor=score_a,
+                                    goalsAgainst=score_b,
+                                    wins=1,
+                                    losses=0,
+                                    draws=0,
+                                    byes=0,
+                                    forfeitWins=0,
+                                    forfeitLosses=0,
+                                    points=4+bonus[0],
+                                    bonusPoints=bonus[0])
+                self.addDataToTable(tableData,
+                                    team_b,
+                                    goalsFor=score_b,
+                                    goalsAgainst=score_a,
+                                    wins=0,
+                                    losses=1,
+                                    draws=0,
+                                    byes=0,
+                                    forfeitWins=0,
+                                    forfeitLosses=0,
+                                    points=0+bonus[1],
+                                    bonusPoints=bonus[1])
+            elif result == 'bwin':
+                self.addDataToTable(tableData,
+                                    team_a,
+                                    goalsFor=score_a,
+                                    goalsAgainst=score_b,
+                                    wins=0,
+                                    losses=1,
+                                    draws=0,
+                                    byes=0,
+                                    forfeitWins=0,
+                                    forfeitLosses=0,
+                                    points=0+bonus[0],
+                                    bonusPoints=bonus[0])
+                self.addDataToTable(tableData,
+                                    team_b,
+                                    goalsFor=score_b,
+                                    goalsAgainst=score_a,
+                                    wins=1,
+                                    losses=0,
+                                    draws=0,
+                                    byes=0,
+                                    forfeitWins=0,
+                                    forfeitLosses=0,
+                                    points=4+bonus[1],
+                                    bonusPoints=bonus[1])
+            
+    
+    def addDataToTable(self, tableData, team, goalsFor, goalsAgainst,
+                       wins, losses, draws, byes, forfeitWins,
+                       forfeitLosses, points, bonusPoints):
+        tableData[team]['goalsFor']         += goalsFor
+        tableData[team]['goalsAgainst']     += goalsAgainst
+        tableData[team]['wins']             += wins
+        tableData[team]['losses']           += losses
+        tableData[team]['draws']            += draws
+        tableData[team]['byes']             += byes
+        tableData[team]['forfeitWins']      += forfeitWins
+        tableData[team]['forfeitLosses']    += forfeitLosses
+        tableData[team]['points']           += points
+        tableData[team]['bonusPoints']      += bonusPoints
     
     
+    def isBye(self,
+              team_a,
+              team_b
+              ):
+        if team_a == 'bye' or team_b == 'bye':
+            return True
+    
+    def isForfeit(self,
+                  score_a,
+                  score_b
+                  ):
+        if score_a == 'FW' or score_a == 'FL' or score_b == 'FW' or score_b == 'FL':
+            return True
+        
     def gameBonus(self,
                   score_a,
                   score_b):
@@ -322,14 +474,12 @@ class ImportInterface(Interface):
     def gameResult(self,
                    score_a,
                    score_b):
-        
-        
         if score_a == score_b:
-            return [2,2]
+            return 'draw'
         elif score_a > score_b:
-            return [4,0]
+            return 'awin'
         elif score_a < score_b:
-            return [0,4]
+            return 'bwin'
     
     def addBars(self):
         """Add bars to the database"""

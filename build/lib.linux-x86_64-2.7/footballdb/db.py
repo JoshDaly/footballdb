@@ -111,5 +111,4 @@ class FootballDB(BaseFile):
                         "deflected_passes" : "INT"
                        },
                        force=True)
-        
-    
+        # Keep adding tables
