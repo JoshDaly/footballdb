@@ -163,39 +163,6 @@ class ImportInterface(Interface):
         except(lite.OperationalError):
             return False
         
-                    if self.db.addNewPlayer(player):
-                        print 'creating table'
-                        """
-                        # insert data into table
-                        self.insert(player,
-                                    ["uid",
-                                    "season",
-                                    "week",
-                                    "opposition",
-                                    "goals",
-                                    "shots_attempted",
-                                    "shots_on_target",
-                                    "assists",
-                                    "tackles",
-                                    "intercepts",
-                                    "gk_saves",
-                                    "fouls_committed",
-                                    "fouls_suffered",
-                                    "blocked_shots",
-                                    "passes_attempted",
-                                    "passes_successful",
-                                    "subbed",
-                                    "attacking_passes_attempted",
-                                    "attacking_passes_successful",
-                                    "turnovers",
-                                    "deflected_passes"
-                                    ],
-                                    to_db)
-                        """
-                    else:
-                        print "I got to here"
-                        
-                    
     def insertData(self, ):
         pass
     
