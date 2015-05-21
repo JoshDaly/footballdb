@@ -162,7 +162,7 @@ class ImportInterface(Interface):
             return True
         except(lite.OperationalError):
             return False
-        
+                    
     def insertData(self, ):
         pass
     
@@ -216,6 +216,121 @@ class ImportInterface(Interface):
                              ],
                             to_db)
                 
+    def viewTable(self,
+                  season):
+        # view table for specified season
+        tableData = {}
+        # connect to database
+        self.connect()
+        
+        # set the select condition
+        C = Condition("season", "=", season)
+        
+        # access the database and get rows
+        rows = self.select('results', ["week","team_a","team_b","score_a","score_b"], C)
+        
+        # disconnect once done
+        self.disconnect()
+        
+        for row in rows:
+            week    = int(row[0])
+            team_a  = row[1]
+            team_b  = row[2]
+            score_a = row[3]
+            score_b = row[4]
+            
+            result  = self.gameResult(score_a,
+                                     score_b)
+            
+            bonus   = self.gameBonus(score_a,
+                                     score_b)
+            
+            self.buildTableDataWrapper(tableData,
+                                team_a,
+                                score_a,
+                                score_b,
+                                result[0],
+                                bonus[0]
+                                )
+            
+            self.buildTableDataWrapper(tableData,
+                                team_b,
+                                score_b,
+                                score_a,
+                                result[1],
+                                bonus[1]
+                                )
+        print tableData
+            
+    def buildTableDataWrapper(self,
+                     tableData,
+                     team,
+                     For,
+                     Against,
+                     result,
+                     bonus
+                     ):
+        # add goals for
+        self.buildTableData(tableData,
+                            team,
+                            'for',
+                            For
+                            )
+            
+        # add goals against
+        self.buildTableData(tableData,
+                            team,
+                            'against',
+                            Against
+                            )
+                
+        # add result
+        self.buildTableData(tableData,
+                            team,
+                            'result',
+                            result
+                            )
+            
+        # add bonus points
+        self.buildTableData(tableData,
+                            team,
+                            'bonus',
+                            bonus
+                            )
+    
+    def buildTableData(self,
+                       tableData,
+                       team,
+                       stat,
+                       value):
+        try:
+            tableData[team][stat] += value
+        except KeyError:
+            try:
+                tableData[team][stat] = value
+            except KeyError:
+                tableData[team] = {stat:value}
+    
+    
+    def gameBonus(self,
+                  score_a,
+                  score_b):
+        bonus_a = score_a / 3
+        bonus_b = score_b / 3
+        return [bonus_a, bonus_b]
+    
+    def gameResult(self,
+                   score_a,
+                   score_b):
+        
+        
+        if score_a == score_b:
+            return [2,2]
+        elif score_a > score_b:
+            return [4,0]
+        elif score_a < score_b:
+            return [0,4]
+    
     def addBars(self):
         """Add bars to the database"""
         if not self.connect(createDB=True):
