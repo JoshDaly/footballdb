@@ -55,17 +55,30 @@ class View(object):
     
     def visualiseTable(self, orderedTable, tableData):
         """visualise table using blank scatter plot"""
-        fig     = plt.figure(figsize=(30,15),dpi=300)
-        ax      = plt.subplot(1,1,1,axisbg='white',autoscale_on=True, aspect='equal')
-        xs      = []
-        ys      = []
-        
-        tableHeaders = ['wins', 'losses', 'draws',
+        fig     = plt.figure(figsize=(8, 2),dpi=400)
+        ax      = plt.subplot(1,1,1)
+        ax.xaxis.set_visible(False)
+        ax.yaxis.set_visible(False)
+        tableHeaders = ['teams','wins', 'losses', 'draws',
                         'goalsFor','goalsAgainst',
                         'byes','forfeitWins',
                         'forfeitLosses','points',
                         'bonusPoints']
         
+        data = []
+        
+        for team in orderedTable:
+            array = [team[0]]
+            for header in tableHeaders[1:]:
+                array.append(tableData[team[0]][header])
+            data.append(array)
+        
+        table = ax.table(cellText=data,
+                         colLabels=tableHeaders,
+                         loc='center'
+                         )
+        
+        plt.savefig('tmp', type='png')
         
         
         
