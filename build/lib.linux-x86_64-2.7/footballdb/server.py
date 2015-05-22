@@ -43,6 +43,7 @@ import sys
 
 # local imports
 from importInterface import ImportInterface
+from viewInterface import ViewInterface
 
 ###############################################################################
 ###############################################################################
@@ -90,11 +91,9 @@ class Server(object):
     def viewTable(self,
                   season):
         # get an interface to the file
-        II = ImportInterface(self.dbfilename)
+        VI = ViewInterface(self.dbfilename)
         
-        # import results as csv file
-        II.viewTable(season)
-    
+        VI.viewTable(season)
     
     def importTest(self):
         # get an interface to the file

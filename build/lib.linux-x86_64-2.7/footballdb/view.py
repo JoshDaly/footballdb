@@ -3,7 +3,7 @@
 #                                                                             #
 #    view.py                                                                  #
 #                                                                             #
-#    Main entry point for the footballdb software                             #
+#    suite of visualisations available for FootballDB                         #
 #                                                                             #
 #    Copyright (C) Josh Daly                                                  #
 #                                                                             #
@@ -37,3 +37,38 @@ __status__ = "Dev"
 ###############################################################################
 ###############################################################################
 ###############################################################################
+
+# system imports
+import numpy as np
+import matplotlib.pyplot as plt
+
+# local imports
+
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+
+class View(object):
+    def __init__(self):
+        pass
+    
+    def visualiseTable(self, orderedTable, tableData):
+        """visualise table using blank scatter plot"""
+        fig     = plt.figure(figsize=(30,15),dpi=300)
+        ax      = plt.subplot(1,1,1,axisbg='white',autoscale_on=True, aspect='equal')
+        xs      = []
+        ys      = []
+        
+        tableHeaders = ['wins', 'losses', 'draws',
+                        'goalsFor','goalsAgainst',
+                        'byes','forfeitWins',
+                        'forfeitLosses','points',
+                        'bonusPoints']
+        
+        
+        
+        
+        
+    
+    
