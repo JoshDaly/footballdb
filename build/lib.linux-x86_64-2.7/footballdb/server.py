@@ -95,6 +95,24 @@ class Server(object):
         
         VI.viewTable(season)
     
+    def viewTeam(self):
+        """TBC"""
+        pass
+    
+    def viewPlayer(self,
+                   player,
+                   stat):
+        # get an interface to the file
+        VI = ViewInterface(self.dbfilename)
+        
+        # visualise player data
+        VI.viewPlayer(player,
+                      stat)
+    
+    def viewCompare(self):
+        """TBC"""
+        pass
+    
     def importTest(self):
         # get an interface to the file
         II = ImportInterface(self.dbfilename)

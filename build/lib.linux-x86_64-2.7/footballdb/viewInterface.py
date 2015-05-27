@@ -61,6 +61,7 @@ class ViewInterface(Interface):
         Interface.__init__(self, dbFileName, verbosity)
         self.db = FootballDB(verbosity=verbosity)            # <-- This line is important!
         self.dbFileName = dbFileName
+        self.V  = View()
     
     #----------------------------------
     
@@ -96,8 +97,7 @@ class ViewInterface(Interface):
             
         sorted_table = sorted(tableData.items(), key=lambda x:x[1]['points'],reverse=True)
         
-        V = View()
-        V.visualiseTable(sorted_table,tableData)
+        self.V.visualiseTable(sorted_table,tableData, season)
             
     def initialiseTeam(self, tableData, team):
         if team not in tableData and team!= 'bye':
@@ -282,7 +282,6 @@ class ViewInterface(Interface):
                                     points=4+bonus[1],
                                     bonusPoints=bonus[1])
             
-    
     def addDataToTable(self, tableData, team, goalsFor, goalsAgainst,
                        wins, losses, draws, byes, forfeitWins,
                        forfeitLosses, points, bonusPoints):
@@ -302,7 +301,6 @@ class ViewInterface(Interface):
                   score_b):
         if score_a == 'GW' or score_b == 'GW':
             return True
-    
     
     def isBye(self,
               team_a,
@@ -336,3 +334,37 @@ class ViewInterface(Interface):
             return 'bwin'
     
     #----------------------------------
+    def viewPlayer(self, player, stat):
+        # local variables
+        playerData = {}
+        
+        # connect to database
+        self.connect()
+        
+        # set condition for select statement
+        rows = self.select(player, ["season","week","%s" % stat])
+        
+        # disconnect from db
+        self.disconnect()
+        
+        # collect db data
+        for row in rows:
+            season  = row[0]
+            week    = row[1]
+            stat    = row[2]
+            self.addPlayerData(playerData, season, week, stat)
+        
+        # ordered dict
+        sortedPlayerData = sorted(playerData.items(), key=lambda x:x[1],reverse=True)
+        
+        # visualise player data
+        self.V.visualisePlayerStats(playerData, sortedPlayerData)
+            
+    def addPlayerData(self, playerData, season, week, stat):
+        try:
+            playerData[season][week] = stat
+        except KeyError:
+            playerData[season] = {week:stat}
+    
+        
+    

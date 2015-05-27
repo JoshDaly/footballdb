@@ -104,42 +104,43 @@ class ImportInterface(Interface):
                 if tabs[0].lower() != 'player':
                     player                      = tabs[0]
                     goals                       = tabs[1]
-                    shots_attempted             = tabs[2]
-                    shots_on_target             = tabs[3]
+                    shotsAttempted              = tabs[2]
+                    shotsOnTarget               = tabs[3]
                     assists                     = tabs[4]
                     tackles                     = tabs[5]
                     intercepts                  = tabs[6]
-                    gk_saves                    = tabs[7]
-                    fouls_committed             = tabs[8]
-                    fouls_suffered              = tabs[9]
-                    blocked_shots               = tabs[10]
-                    passes_attempted            = tabs[11]
-                    passes_successful           = tabs[12]
+                    gkSaves                     = tabs[7]
+                    foulsCommitted              = tabs[8]
+                    foulsSuffered               = tabs[9]
+                    blockedShots                = tabs[10]
+                    passesAttempted             = tabs[11]
+                    passesSuccessful            = tabs[12]
                     subbed                      = tabs[13]
-                    attacking_passes_attempted  = tabs[14]
-                    attacking_passes_successful = tabs[15]
+                    attackingPassesAttempted    = tabs[14]
+                    attackingPassesSuccessful   = tabs[15]
                     turnovers                   = tabs[16]
-                    deflected_passes            = tabs[17]
+                    deflectedPasses             = tabs[17]
 
-                    to_db = [(season, week, opposition, goals,shots_attempted,shots_on_target,assists,tackles,
-                            intercepts,gk_saves,fouls_committed,fouls_suffered,
-                            blocked_shots,passes_attempted,passes_successful,subbed,
-                            attacking_passes_attempted,attacking_passes_successful,turnovers,deflected_passes)]
+                    to_db = [(season, week, opposition, goals,shotsAttempted,shotsOnTarget,assists,tackles,
+                            intercepts,gkSaves,foulsCommitted,foulsSuffered,
+                            blockedShots,passesAttempted,passesSuccessful,subbed,
+                            attackingPassesAttempted,attackingPassesSuccessful,turnovers,deflectedPasses)]
                     
                     # check to see if table exists, if not, create it!
                     #self.db.addNewPlayer(player)
                     if self.doesPlayerTableExist(player):
-                        # insert data into table
-                        self.insert(player,
-                                    [
-                                    "season","week","opposition","goals","shots_attempted",
-                                    "shots_on_target","assists","tackles","intercepts",
-                                    "gk_saves","fouls_committed","fouls_suffered",
-                                    "blocked_shots","passes_attempted","passes_successful",
-                                    "subbed","attacking_passes_attempted","attacking_passes_successful",
-                                    "turnovers","deflected_passes"
-                                    ],
-                                    to_db)
+                        if self.doesGameDataExist(player, season, week):
+                            # insert data into table
+                            self.insert(player,
+                                        [
+                                        "season","week","opposition","goals","shotsAttempted",
+                                        "shotsOnTarget","assists","tackles","intercepts",
+                                        "gkSaves","foulsCommitted","foulsSuffered",
+                                        "blockedShots","passesAttempted","passesSuccessful",
+                                        "subbed","attackingPassesAttempted","attackingPassesSuccessful",
+                                        "turnovers","deflectedPasses"
+                                        ],
+                                        to_db)
                     else:
                         print "Adding new player (%s) table to %s" % (player, self.dbFileName)
                          # create table
@@ -148,15 +149,29 @@ class ImportInterface(Interface):
                         # then add data
                         self.insert(player,
                                     [
-                                    "season","week","opposition","goals","shots_attempted",
-                                    "shots_on_target","assists","tackles","intercepts",
-                                    "gk_saves","fouls_committed","fouls_suffered",
-                                    "blocked_shots","passes_attempted","passes_successful",
-                                    "subbed","attacking_passes_attempted","attacking_passes_successful",
-                                    "turnovers","deflected_passes"
+                                    "season","week","opposition","goals","shotsAttempted",
+                                    "shotsOnTarget","assists","tackles","intercepts",
+                                    "gkSaves","foulsCommitted","foulsSuffered",
+                                    "blockedShots","passesAttempted","passesSuccessful",
+                                    "subbed","attackingPassesAttempted","attackingPassesSuccessful",
+                                    "turnovers","deflectedPasses"
                                     ],
                                     to_db)
                     
+    def doesGameDataExist(self, player, season, week):
+        try:
+            C = Condition("season", "=", season)
+            bc = Condition("week", "=", week)
+            C = Condition(C, "and", bc)
+            gameData = self.select(player, ["*"], C)
+            if len(gameData) == 0:
+                return True
+            else:
+                print "ImportError: game data already exists for season %d week %d" % (season, week)
+                sys.exit()
+        except(lite.OperationalError):
+            return True
+    
     def doesPlayerTableExist(self, player):
         try:
             table_data = self.select(player, "*")

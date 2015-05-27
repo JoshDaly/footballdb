@@ -71,6 +71,16 @@ def doWork(args):
     elif(args.subparser_name == 'view'):
         if args.view_parser_name == 'ladder':
             S.viewTable(args.season)
+            
+        elif args.view_parser_name == 'player':
+            S.viewPlayer(args.player,
+                         args.stat)
+        
+        elif args.view_parser_name == 'team':
+            S.viewTeam()
+        
+        elif args.view_parser_name == 'compare':
+            S.viewCompare()
     
     elif(args.subparser_name == 'test'):
         S.importTest()
@@ -165,6 +175,9 @@ if __name__ == '__main__':
                                                formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                help='Visualise player data for the current or past season',
                                                description='Visualise player data for the current or past season')    
+    player_parser.add_argument("db", help="Path to the footballDB database to use / create")
+    player_parser.add_argument("player", help="Visualise this players statistics")
+    player_parser.add_argument("stat", help="Statistic to visualise")
     
     #-------------------------------------------------
     # visualise footballdb compare player data
