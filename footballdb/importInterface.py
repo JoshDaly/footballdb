@@ -98,28 +98,28 @@ class ImportInterface(Interface):
         
         with open(gameDataCSV) as fh:
             for l in fh:
-                tabs = l.rstrip().split("\t")
+                commas = l.rstrip().split(",")
                 
                 # skip header
-                if tabs[0].lower() != 'player':
-                    player                      = tabs[0]
-                    goals                       = tabs[1]
-                    shotsAttempted              = tabs[2]
-                    shotsOnTarget               = tabs[3]
-                    assists                     = tabs[4]
-                    tackles                     = tabs[5]
-                    intercepts                  = tabs[6]
-                    gkSaves                     = tabs[7]
-                    foulsCommitted              = tabs[8]
-                    foulsSuffered               = tabs[9]
-                    blockedShots                = tabs[10]
-                    passesAttempted             = tabs[11]
-                    passesSuccessful            = tabs[12]
-                    subbed                      = tabs[13]
-                    attackingPassesAttempted    = tabs[14]
-                    attackingPassesSuccessful   = tabs[15]
-                    turnovers                   = tabs[16]
-                    deflectedPasses             = tabs[17]
+                if commas[0].lower() != 'player':
+                    player                      = commas[0]
+                    goals                       = commas[1]
+                    shotsAttempted              = commas[2]
+                    shotsOnTarget               = commas[3]
+                    assists                     = commas[4]
+                    tackles                     = commas[5]
+                    intercepts                  = commas[6]
+                    gkSaves                     = commas[7]
+                    foulsCommitted              = commas[8]
+                    foulsSuffered               = commas[9]
+                    blockedShots                = commas[10]
+                    passesAttempted             = commas[11]
+                    passesSuccessful            = commas[12]
+                    subbed                      = commas[13]
+                    attackingPassesAttempted    = commas[14]
+                    attackingPassesSuccessful   = commas[15]
+                    turnovers                   = commas[16]
+                    deflectedPasses             = commas[17]
 
                     to_db = [(season, week, opposition, goals,shotsAttempted,shotsOnTarget,assists,tackles,
                             intercepts,gkSaves,foulsCommitted,foulsSuffered,
@@ -213,11 +213,11 @@ class ImportInterface(Interface):
         # table already exists, created with the database!
         with open(resultsDataFile) as fh:
             for l in fh:
-                tabs        = l.rstrip().split("\t")
-                team_a      = tabs[0]
-                team_b      = tabs[1]
-                score_a     = tabs[2]
-                score_b     = tabs[3]
+                commas        = l.rstrip().split(",")
+                team_a      = commas[0]
+                team_b      = commas[1]
+                score_a     = commas[2]
+                score_b     = commas[3]
                 
                 to_db = [(season, week, team_a, team_b, score_a, score_b)]
         
