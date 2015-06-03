@@ -62,6 +62,12 @@ class ViewInterface(Interface):
         self.db = FootballDB(verbosity=verbosity)            # <-- This line is important!
         self.dbFileName = dbFileName
         self.V  = View()
+        self.gameStats = ["season","week","opposition","goals",
+                          "shotsAttempted","shotsOnTarget","assists",
+                          "tackles","intercepts","gkSaves","foulsCommitted",
+                          "foulsSuffered","blockedShots","passesAttempted",
+                          "passesSuccessful","subbed","attackingPassesAttempted",
+                          "attackingPassesSuccessful","turnovers","deflectedPasses"]
     
     #----------------------------------
     
@@ -334,7 +340,9 @@ class ViewInterface(Interface):
             return 'bwin'
     
     #----------------------------------
-    def viewPlayer(self, player, stat):
+    def viewPlayerStat(self,
+                       player,
+                       stat):
         # local variables
         playerData = {}
         
@@ -342,7 +350,12 @@ class ViewInterface(Interface):
         self.connect()
         
         # set condition for select statement
-        rows = self.select(player, ["season","week","%s" % stat])
+        rows = self.select(player, ["season","week","opposition","goals",
+                                    "shotsAttempted","shotsOnTarget","assists",
+                                    "tackles","intercepts","gkSaves","foulsCommitted",
+                                    "foulsSuffered","blockedShots","passesAttempted",
+                                    "passesSuccessful","subbed","attackingPassesAttempted",
+                                    "attackingPassesSuccessful","turnovers","deflectedPasses"])
         
         # disconnect from db
         self.disconnect()
@@ -351,20 +364,71 @@ class ViewInterface(Interface):
         for row in rows:
             season  = row[0]
             week    = row[1]
-            stat    = row[2]
-            self.addPlayerData(playerData, season, week, stat)
-        
+            self.addPlayerDataAllWrapper(playerData, season, week, row)
+            
         # ordered dict
         sortedPlayerData = sorted(playerData.items(), key=lambda x:x[1],reverse=True)
         
         # visualise player data
-        self.V.visualisePlayerStats(playerData, sortedPlayerData)
+        self.V.visualisePlayerStats(playerData,
+                                    sortedPlayerData,
+                                    stat)
+
+    #----------------------------------
+    def viewPlayerSummary(self, player):
+        # local variables
+        playerData = {}
+        
+        # connect to db
+        self.connect()
+        
+        # set condition for select statement
+        rows = self.select(player, ["season","week","opposition","goals",
+                                    "shotsAttempted","shotsOnTarget","assists",
+                                    "tackles","intercepts","gkSaves","foulsCommitted",
+                                    "foulsSuffered","blockedShots","passesAttempted",
+                                    "passesSuccessful","subbed","attackingPassesAttempted",
+                                    "attackingPassesSuccessful","turnovers","deflectedPasses"])
+        
+        # disconnect from db
+        self.disconnect()
+        
+        # collect db data
+        for row in rows:
+            season  = row[0]
+            week    = row[1]
+            self.addPlayerDataAllWrapper(playerData, season, week, row)
             
-    def addPlayerData(self, playerData, season, week, stat):
+        # ordered dict
+        sortedPlayerData = sorted(playerData.items(), key=lambda x:x[1],reverse=True)
+        
+        self.V.visualisePlayerSummary(playerData,
+                                    sortedPlayerData,
+                                    stat)
+ 
+    #------------------------------------
+    #         Univeral functions        #
+    #------------------------------------
+    def addPlayerDataAllWrapper(self, playerData, season, week, row):
+        
+        for i,data in enumerate(row[2:]):    
+            statName    = self.gameStats[i+2]
+            statValue   = data
+            self.addPlayerDataAll(playerData,
+                                  season,
+                                  week,
+                                  statName,
+                                  statValue)
+        
+    def addPlayerDataAll(self, playerData, season, week, statName, statValue):
         try:
-            playerData[season][week] = stat
+            playerData[season][week][statName] = statValue
         except KeyError:
-            playerData[season] = {week:stat}
+            try:
+                playerData[season][week] = {statName:statValue}
+            except KeyError:
+                playerData[season] = {week:{statName:statValue}}
+        
     
         
     

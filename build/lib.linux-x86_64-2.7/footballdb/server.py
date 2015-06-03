@@ -99,15 +99,23 @@ class Server(object):
         """TBC"""
         pass
     
-    def viewPlayer(self,
-                   player,
-                   stat):
+    def viewPlayerStat(self,
+                        player,
+                        stat):
         # get an interface to the file
         VI = ViewInterface(self.dbfilename)
         
         # visualise player data
-        VI.viewPlayer(player,
-                      stat)
+        VI.viewPlayerStat(player,
+                        stat)
+    
+    def viewPlayerSummary(self,
+                          player):
+        # get an interface to the db file
+        VI = ViewInterface(self.dbfilename)
+        
+        # visualise player summary
+        VI.viewPlayerSummary(player)    
     
     def viewCompare(self):
         """TBC"""

@@ -53,18 +53,99 @@ class View(object):
     def __init__(self):
         pass
     
+    #----------------------------------------
+    
     def visualisePlayerStats(self,
                              playerData,
-                             sortedPlayerData):
-        fig = plt.figure()
-        ax  = plt.subplot(1,1,1)
+                             sortedPlayerData,
+                             stat):
+        """
+        "season","week","opposition","goals",
+        "shotsAttempted","shotsOnTarget","assists",
+        "tackles","intercepts","gkSaves","foulsCommitted",
+        "foulsSuffered","blockedShots","passesAttempted",
+        "passesSuccessful","subbed","attackingPassesAttempted",
+        "attackingPassesSuccessful","turnovers","deflectedPasses"
+        """
+        if(stat == "goals" or stat == "assists" or stat == "tackles" or
+           stat == "intercepts" or stat == "gkSaves" or stat == "blockedShots" or
+           stat == "subbed" or stat == "turnovers" or stat == "deflectedPasses"):
+            # make bar chart with matplotlib 
+            fig = plt.figure()
+            ax  = plt.subplot(1,1,1)
+            
+            # calculate the number of data points
+            ind, ys = self.numDataPoints(playerData,
+                                        sortedPlayerData)
+            
+            self.barChart(ind,
+                          ys)
         
-        # calculate the number of data points
-        ind, ys = self.numDataPoints(playerData,
-                                    sortedPlayerData)
+        elif stat == 'passPercentage':
+            # make pie chart with matplotlib
+            # set variables to zero
+            passesAttempted     = 0
+            passesSuccessful    = 0
+            
+            for data in sortedPlayerData:
+                season = data[0]
+                for week in data[1].keys():
+                    passesAttempted     += int(data[1][week]['passesAttempted'])
+                    passesSuccessful    += int(data[1][week]['passesSuccessful'])
+                    
+            percSuccessful      = float(passesSuccessful)/passesAttempted * 100
+            percUnSuccessful    = float(passesAttempted - passesSuccessful)/passesAttempted * 100
+            
+            labels = ['passesSuccessful','passesUnSuccessful']
+            
+            sizes  = [percSuccessful,percUnSuccessful]
+            
+            self.pieChart(labels, sizes)
         
-        ax.bar(ind, ys, 0.35)
+        elif stat == 'attackingPassPercentage':
+            # make pie chart with matplotlib 
+                        # set variables to zero
+            attackingPassesAttempted     = 0
+            attackingPassesSuccessful    = 0
+            
+            for data in sortedPlayerData:
+                season = data[0]
+                for week in data[1].keys():
+                    attackingPassesAttempted     += int(data[1][week]['attackingPassesAttempted'])
+                    attackingPassesSuccessful    += int(data[1][week]['attackingPassesSuccessful'])
+                    
+            percSuccessful      = float(attackingPassesSuccessful)/attackingPassesAttempted * 100
+            percUnSuccessful    = float(attackingPassesAttempted - attackingPassesSuccessful)/attackingPassesAttempted * 100
+            
+            labels = ['attackingPassesSuccessful','passesUnSuccessful']
+            
+            sizes  = [percSuccessful,percUnSuccessful]
+            
+            self.pieChart(labels, sizes)    
+        
+        elif stat == 'shotPercentage':
+            # make pie chart with matplotlib 
+            pass
+    
+    def barChart(self,
+                 independentVariables,
+                 yDataPoints):
+        
+        ax.bar(independentVariables, yDataPoints, 0.35)
         plt.show()
+    
+    def pieChart(self, labels, sizes):
+        # set colour blind safe colour scheme
+        colours = ["#1f78b4","#a6cee3"]
+        
+        explode = (0.1,0) # explode the first slice
+        
+        plt.pie(sizes, explode=explode, labels=labels, colors=colours,autopct='%1.1f%%', shadow=True, startangle=90)
+    
+        plt.axis('equal')
+        
+        plt.show()
+        
         
     def numDataPoints(self,
                       playerData,
@@ -80,12 +161,22 @@ class View(object):
         ind = np.arange(N)
         return ind, ys
     
+    #----------------------------------------
+    
+    def visualisePlayerSummary(self, ):
+        pass
+    
+    #----------------------------------------
+    
     def visualiseTeamStats(self):
         pass
+    
+    #----------------------------------------
     
     def compareStats(self, type, ):
         pass
     
+    #----------------------------------------
     
     def visualiseTable(self, orderedTable, tableData, season):
         """visualise table using blank scatter plot"""
@@ -129,7 +220,7 @@ class View(object):
         
         #plt.savefig('tmp', type='png')
         
-        
+    #----------------------------------------
         
         
     

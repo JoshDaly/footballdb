@@ -73,8 +73,11 @@ def doWork(args):
             S.viewTable(args.season)
             
         elif args.view_parser_name == 'player':
-            S.viewPlayer(args.player,
-                         args.stat)
+            S.viewPlayerStat(args.player,
+                            args.stat)
+        
+        elif args.view_parser_name == 'playerSummary':
+            S.viewPlayerSummary(args.player)
         
         elif args.view_parser_name == 'team':
             S.viewTeam()
@@ -185,6 +188,13 @@ if __name__ == '__main__':
                                                formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                                help='Compare players current or past statistics',
                                                description='Compare players current or past statistics')
+    
+    playerSummary_parser = view_subparsers.add_parser('playerSummary',
+                                               formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+                                               help='Compare players current or past statistics',
+                                               description='Compare players current or past statistics')
+    playerSummary_parser.add_argument("db",help="Path to the footballDB database to use / create")
+    playerSummary_parser.add_argument("player", help="Visualise a summary of this players statistics")
     
     #-------------------------------------------------
     #-------------------------------------------------
